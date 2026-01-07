@@ -1,0 +1,30 @@
+Reasoning: low
+
+I want to create a synthetic schema dataset of very large schemas. 
+This is to expand existing schemas from an NL-to-SQL benchmark to study the impact of larger schema sizes. 
+Your task is to generate additional tables and columns that are adjacent to the data in the original schema, but do not overlap. 
+I.e., do not include additional tables that could contain information about objects in the base tables. 
+It doesn’t have to match the real tables perfectly, just do your best to come up with some additional structure that’s realistic. 
+Table names should represent their content. 
+Do not use non-descript names like aux_001 and so forth. 
+Each table should have at least 20 columns and fewer than 50 columns.
+Be creative! You can use more obscure and abbreviated names for some of the tables and columns.
+For other tables and columns, use descriptive "more natural" naming practices.
+
+The base database schema is:
+{original_schema}
+
+You have already created these tables:
+{synthetic_tables}
+
+Your output should be a runnable SQL script without any extra annotations or explanations in the format.
+To keep things simple, avoid any sql special characters such as apostraphes or parentheses in the inserted values.
+
+-- Natural language table description comment
+CREATE TABLE ... ;
+
+INSERT INTO ... ;
+INSERT INTO ... ;
+INSERT INTO ... ;
+
+Now create 10 new table CREATE TABLE expression each with three INSERT statements to provide example values.

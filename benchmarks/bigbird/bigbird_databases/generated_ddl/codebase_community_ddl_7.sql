@@ -1,0 +1,370 @@
+-- Table storing periodic snapshots of user profile information
+CREATE TABLE user_profile_snapshots
+(
+    SnapshotId          INTEGER      NOT NULL PRIMARY KEY,
+    UserId              INTEGER      NOT NULL,
+    SnapshotDate        DATETIME     NOT NULL,
+    DisplayName         TEXT,
+    Reputation          INTEGER,
+    Age                 INTEGER,
+    Location            TEXT,
+    WebsiteUrl          TEXT,
+    AboutMe             TEXT,
+    ProfileImageUrl     TEXT,
+    TotalPosts          INTEGER,
+    TotalComments       INTEGER,
+    TotalVotes          INTEGER,
+    BadgesEarned        INTEGER,
+    LastLoginDate       DATETIME,
+    EmailVerified       INTEGER,   -- 0 false, 1 true
+    TwoFactorEnabled    INTEGER,
+    PreferredLanguage   TEXT,
+    TimeZone            TEXT,
+    AccountStatus       TEXT,
+    MobileNumber        TEXT,
+    NewsletterSubscribed INTEGER,
+    LastSeenIp          TEXT,
+    SessionCount        INTEGER,
+    ReputationChange30d INTEGER,
+    ReputationChange90d INTEGER,
+    ReputationChange365d INTEGER,
+    IsModerator         INTEGER,
+    IsEmployee          INTEGER
+);
+INSERT INTO user_profile_snapshots (SnapshotId,UserId,SnapshotDate,DisplayName,Reputation,Age,Location,WebsiteUrl,AboutMe,ProfileImageUrl,TotalPosts,TotalComments,TotalVotes,BadgesEarned,LastLoginDate,EmailVerified,TwoFactorEnabled,PreferredLanguage,TimeZone,AccountStatus,MobileNumber,NewsletterSubscribed,LastSeenIp,SessionCount,ReputationChange30d,ReputationChange90d,ReputationChange365d,IsModerator,IsEmployee) VALUES (1,101,'2025-12-01 08:00:00','Alice',1500,29,'Springfield','http://alice.com','Developer and writer','http://img.com/a.jpg',120,45,300,5,'2025-12-01 07:50:00',1,1,'en','UTC-5','active','5551234',1,'192.168.1.10',8,50,120,400,0,0);
+INSERT INTO user_profile_snapshots (SnapshotId,UserId,SnapshotDate,DisplayName,Reputation,Age,Location,WebsiteUrl,AboutMe,ProfileImageUrl,TotalPosts,TotalComments,TotalVotes,BadgesEarned,LastLoginDate,EmailVerified,TwoFactorEnabled,PreferredLanguage,TimeZone,AccountStatus,MobileNumber,NewsletterSubscribed,LastSeenIp,SessionCount,ReputationChange30d,ReputationChange90d,ReputationChange365d,IsModerator,IsEmployee) VALUES (2,102,'2025-12-01 08:00:00','Bob',2300,35,'Riverside','http://bob.org','Data scientist','http://img.com/b.jpg',200,80,500,10,'2025-12-01 07:45:00',1,0,'es','UTC+1','active','5555678',0,'10.0.0.5',12,150,300,800,0,0);
+INSERT INTO user_profile_snapshots (SnapshotId,UserId,SnapshotDate,DisplayName,Reputation,Age,Location,WebsiteUrl,AboutMe,ProfileImageUrl,TotalPosts,TotalComments,TotalVotes,BadgesEarned,LastLoginDate,EmailVerified,TwoFactorEnabled,PreferredLanguage,TimeZone,AccountStatus,MobileNumber,NewsletterSubscribed,LastSeenIp,SessionCount,ReputationChange30d,ReputationChange90d,ReputationChange365d,IsModerator,IsEmployee) VALUES (3,103,'2025-12-01 08:00:00','Carol',980,22,'Lakeside','http://carol.net','Student','http://img.com/c.jpg',45,20,100,2,'2025-12-01 07:55:00',0,0,'fr','UTC+2','suspended','5559012',1,'172.16.0.3',4,10,30,120,0,0);
+
+-- Table capturing detailed post engagement metrics per day
+CREATE TABLE post_engagement_metrics
+(
+    MetricId          INTEGER      NOT NULL PRIMARY KEY,
+    PostId            INTEGER      NOT NULL,
+    MetricDate        DATE         NOT NULL,
+    Views             INTEGER,
+    UniqueVisitors    INTEGER,
+    Likes             INTEGER,
+    Dislikes          INTEGER,
+    Shares            INTEGER,
+    Comments          INTEGER,
+    Favorites         INTEGER,
+    Upvotes           INTEGER,
+    Downvotes         INTEGER,
+    EditCount         INTEGER,
+    CloseVotes        INTEGER,
+    ReopenVotes       INTEGER,
+    SpamFlags         INTEGER,
+    LowQualityFlags   INTEGER,
+    HelpfulFlags      INTEGER,
+    AvgReadTimeSec    INTEGER,
+    BounceRatePct     INTEGER,
+    ExitRatePct       INTEGER,
+    ScrollDepthPct    INTEGER,
+    ReferralSource    TEXT,
+    DeviceType        TEXT,
+    Browser           TEXT,
+    OperatingSystem   TEXT,
+    Country           TEXT,
+    Region            TEXT,
+    City              TEXT,
+    TimeOnPageSec     INTEGER,
+    IsFeatured        INTEGER,
+    IsPromoted        INTEGER
+);
+INSERT INTO post_engagement_metrics (MetricId,PostId,MetricDate,Views,UniqueVisitors,Likes,Dislikes,Shares,Comments,Favorites,Upvotes,Downvotes,EditCount,CloseVotes,ReopenVotes,SpamFlags,LowQualityFlags,HelpfulFlags,AvgReadTimeSec,BounceRatePct,ExitRatePct,ScrollDepthPct,ReferralSource,DeviceType,Browser,OperatingSystem,Country,Region,City,TimeOnPageSec,IsFeatured,IsPromoted) VALUES (1,201,'2025-12-01',1500,900,120,5,30,45,60,300,20,2,1,0,0,1,5,120,40,30,80,'search','desktop','Chrome','Windows','US','California','SanFrancisco',90,0,0);
+INSERT INTO post_engagement_metrics (MetricId,PostId,MetricDate,Views,UniqueVisitors,Likes,Dislikes,Shares,Comments,Favorites,Upvotes,Downvotes,EditCount,CloseVotes,ReopenVotes,SpamFlags,LowQualityFlags,HelpfulFlags,AvgReadTimeSec,BounceRatePct,ExitRatePct,ScrollDepthPct,ReferralSource,DeviceType,Browser,OperatingSystem,Country,Region,City,TimeOnPageSec,IsFeatured,IsPromoted) VALUES (2,202,'2025-12-01',800,500,60,2,15,20,35,150,10,1,0,0,0,0,2,90,35,25,70,'social','mobile','Safari','iOS','UK','England','London',75,1,0);
+INSERT INTO post_engagement_metrics (MetricId,PostId,MetricDate,Views,UniqueVisitors,Likes,Dislikes,Shares,Comments,Favorites,Upvotes,Downvotes,EditCount,CloseVotes,ReopenVotes,SpamFlags,LowQualityFlags,HelpfulFlags,AvgReadTimeSec,BounceRatePct,ExitRatePct,ScrollDepthPct,ReferralSource,DeviceType,Browser,OperatingSystem,Country,Region,City,TimeOnPageSec,IsFeatured,IsPromoted) VALUES (3,203,'2025-12-01',2500,1800,200,10,50,80,120,500,30,5,2,1,1,2,8,150,45,35,85,'direct','desktop','Firefox','Linux','DE','Bavaria','Munich',110,0,1);
+
+-- Table storing historical tag usage trends per month
+CREATE TABLE tag_usage_trends
+(
+    TrendId          INTEGER      NOT NULL PRIMARY KEY,
+    TagId            INTEGER      NOT NULL,
+    YearMonth        TEXT         NOT NULL,   -- format YYYYMM
+    PostCount        INTEGER,
+    QuestionCount    INTEGER,
+    AnswerCount      INTEGER,
+    ViewCount        INTEGER,
+    VoteCount        INTEGER,
+    FavoriteCount    INTEGER,
+    NewUserCount     INTEGER,
+    ExperiencedUserCount INTEGER,
+    AvgScore         REAL,
+    MedianScore      INTEGER,
+    StdDevScore      REAL,
+    GrowthPct        REAL,
+    DeclinePct       REAL,
+    SeasonalFactor   REAL,
+    RelatedTagIds    TEXT,
+    SynonymTagIds    TEXT,
+    IsTrending       INTEGER,
+    TrendingScore    REAL,
+    LastUpdateTime   DATETIME,
+    SourceSystem     TEXT,
+    RegionFocus      TEXT,
+    LanguageFocus    TEXT,
+    IsDeprecated     INTEGER,
+    DeprecationDate  DATETIME,
+    ReplacementTagId INTEGER,
+    CommentCount     INTEGER,
+    EditCount        INTEGER,
+    FlagCount        INTEGER,
+    SpamFlagCount    INTEGER,
+    LowQualityFlagCount INTEGER,
+    HelpfulFlagCount INTEGER,
+    IsCommunityWiki  INTEGER,
+    WikiRevisionId   INTEGER
+);
+INSERT INTO tag_usage_trends (TrendId,TagId,YearMonth,PostCount,QuestionCount,AnswerCount,ViewCount,VoteCount,FavoriteCount,NewUserCount,ExperiencedUserCount,AvgScore,MedianScore,StdDevScore,GrowthPct,DeclinePct,SeasonalFactor,RelatedTagIds,SynonymTagIds,IsTrending,TrendingScore,LastUpdateTime,SourceSystem,RegionFocus,LanguageFocus,IsDeprecated,DeprecationDate,ReplacementTagId,CommentCount,EditCount,FlagCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsCommunityWiki,WikiRevisionId) VALUES (1,301,'202512',5000,3000,2000,120000,8000,600,1500,3500,2.5,2,0.8,5.0,0.0,1.1,'302,303','304',1,78.5,'2025-12-01 00:00:00','analytics','global','en',0,NULL,NULL,250,120,30,5,10,15,1,45);
+INSERT INTO tag_usage_trends (TrendId,TagId,YearMonth,PostCount,QuestionCount,AnswerCount,ViewCount,VoteCount,FavoriteCount,NewUserCount,ExperiencedUserCount,AvgScore,MedianScore,StdDevScore,GrowthPct,DeclinePct,SeasonalFactor,RelatedTagIds,SynonymTagIds,IsTrending,TrendingScore,LastUpdateTime,SourceSystem,RegionFocus,LanguageFocus,IsDeprecated,DeprecationDate,ReplacementTagId,CommentCount,EditCount,FlagCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsCommunityWiki,WikiRevisionId) VALUES (2,302,'202512',3200,2100,1100,80000,5400,400,900,2300,3.0,3,1.1,2.5,0.0,0.9,'301,304','','',0,12.3,'2025-12-01 00:00:00','analytics','EU','de',0,NULL,NULL,180,80,20,2,5,8,0,30);
+INSERT INTO tag_usage_trends (TrendId,TagId,YearMonth,PostCount,QuestionCount,AnswerCount,ViewCount,VoteCount,FavoriteCount,NewUserCount,ExperiencedUserCount,AvgScore,MedianScore,StdDevScore,GrowthPct,DeclinePct,SeasonalFactor,RelatedTagIds,SynonymTagIds,IsTrending,TrendingScore,LastUpdateTime,SourceSystem,RegionFocus,LanguageFocus,IsDeprecated,DeprecationDate,ReplacementTagId,CommentCount,EditCount,FlagCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsCommunityWiki,WikiRevisionId) VALUES (3,303,'202512',1500,900,600,35000,2400,150,400,1100,1.8,2,0.5,-1.0,0.5,1.0,'301,302','',0,0,NULL,'2025-12-01 00:00:00','analytics','Asia','ja',1,'2024-06-01 00:00:00',301,60,30,10,1,3,6,0,12);
+
+-- Table recording moderator shift schedules and assignments
+CREATE TABLE moderator_shift_schedule
+(
+    ShiftId          INTEGER      NOT NULL PRIMARY KEY,
+    ModeratorId      INTEGER      NOT NULL,
+    ShiftStart       DATETIME     NOT NULL,
+    ShiftEnd         DATETIME     NOT NULL,
+    TimeZone         TEXT,
+    PrimaryRegion    TEXT,
+    SecondaryRegion  TEXT,
+    AssignedQueue    TEXT,
+    MaxConcurrentReviews INTEGER,
+    MinReviewScore   INTEGER,
+    AlertThreshold   INTEGER,
+    CommunicationChannel TEXT,
+    ContactPhone     TEXT,
+    ContactEmail     TEXT,
+    IsOnCall         INTEGER,
+    IsRemote         INTEGER,
+    DeviceId         TEXT,
+    LaptopModel      TEXT,
+    HeadsetModel     TEXT,
+    PreferredLanguage TEXT,
+    Notes            TEXT,
+    CreatedAt        DATETIME,
+    UpdatedAt        DATETIME,
+    LastLogin        DATETIME,
+    ShiftStatus      TEXT,
+    BreakCount       INTEGER,
+    BreakDurationMin INTEGER,
+    OvertimeAllowed  INTEGER,
+    ShiftVersion     INTEGER,
+    AuditLogId       INTEGER,
+    EscalationLevel  INTEGER,
+    IncidentCount    INTEGER,
+    SatisfactionScore INTEGER,
+    TrainingCompleted INTEGER,
+    AccessibilityNeeds TEXT,
+    ShiftTag         TEXT,
+    BackupModeratorId INTEGER,
+    ShiftRating      INTEGER
+);
+INSERT INTO moderator_shift_schedule (ShiftId,ModeratorId,ShiftStart,ShiftEnd,TimeZone,PrimaryRegion,SecondaryRegion,AssignedQueue,MaxConcurrentReviews,MinReviewScore,AlertThreshold,CommunicationChannel,ContactPhone,ContactEmail,IsOnCall,IsRemote,DeviceId,LaptopModel,HeadsetModel,PreferredLanguage,Notes,CreatedAt,UpdatedAt,LastLogin,ShiftStatus,BreakCount,BreakDurationMin,OvertimeAllowed,ShiftVersion,AuditLogId,EscalationLevel,IncidentCount,SatisfactionScore,TrainingCompleted,AccessibilityNeeds,ShiftTag,BackupModeratorId,ShiftRating) VALUES (1,201,'2025-12-01 08:00:00','2025-12-01 16:00:00','UTC-5','NorthAmerica','SouthAmerica','review','5','80','10','slack','5551234','mod1@example.com',1,0,'DEV001','DellXPS13','Logitech','en','First shift of the month','2025-11-30 12:00:00','2025-12-01 07:50:00','2025-11-30 23:00:00','active','2','15',1,1,'LOG001',2,0,95,1,'','day','202',5);
+INSERT INTO moderator_shift_schedule (ShiftId,ModeratorId,ShiftStart,ShiftEnd,TimeZone,PrimaryRegion,SecondaryRegion,AssignedQueue,MaxConcurrentReviews,MinReviewScore,AlertThreshold,CommunicationChannel,ContactPhone,ContactEmail,IsOnCall,IsRemote,DeviceId,LaptopModel,HeadsetModel,PreferredLanguage,Notes,CreatedAt,UpdatedAt,LastLogin,ShiftStatus,BreakCount,BreakDurationMin,OvertimeAllowed,ShiftVersion,AuditLogId,EscalationLevel,IncidentCount,SatisfactionScore,TrainingCompleted,AccessibilityNeeds,ShiftTag,BackupModeratorId,ShiftRating) VALUES (2,202,'2025-12-01 16:00:00','2025-12-02 00:00:00','UTC+1','Europe','','spam','4','70','8','teams','5555678','mod2@example.com',0,1,'DEV002','MacBookPro','Plantronics','es','Evening shift','2025-12-01 10:00:00','2025-12-01 15:45:00','2025-12-01 15:30:00','completed','1','10',0,2,'LOG002',1,1,88,1,'','night','203',4);
+INSERT INTO moderator_shift_schedule (ShiftId,ModeratorId,ShiftStart,ShiftEnd,TimeZone,PrimaryRegion,SecondaryRegion,AssignedQueue,MaxConcurrentReviews,MinReviewScore,AlertThreshold,CommunicationChannel,ContactPhone,ContactEmail,IsOnCall,IsRemote,DeviceId,LaptopModel,HeadsetModel,PreferredLanguage,Notes,CreatedAt,UpdatedAt,LastLogin,ShiftStatus,BreakCount,BreakDurationMin,OvertimeAllowed,ShiftVersion,AuditLogId,EscalationLevel,IncidentCount,SatisfactionScore,TrainingCompleted,AccessibilityNeeds,ShiftTag,BackupModeratorId,ShiftRating) VALUES (3,203,'2025-12-02 00:00:00','2025-12-02 08:00:00','UTC+9','Asia','Oceania','audit','3','85','12','email','5559012','mod3@example.com',1,0,'DEV003','LenovoThinkPad','Jabra','ja','Night audit','2025-12-01 18:00:00','2025-12-02 00:00:00','2025-12-01 23:50:00','active','0','0',1,3,'LOG003',3,0,92,1,'','graveyard','204',3);
+
+-- Table for storing API error log entries
+CREATE TABLE api_error_logs
+(
+    ErrorId          INTEGER      NOT NULL PRIMARY KEY,
+    Timestamp        DATETIME     NOT NULL,
+    ApiEndpoint      TEXT,
+    HttpMethod       TEXT,
+    StatusCode       INTEGER,
+    ErrorMessage     TEXT,
+    StackTrace       TEXT,
+    RequestId        TEXT,
+    UserId           INTEGER,
+    ClientIp         TEXT,
+    UserAgent        TEXT,
+    CorrelationId    TEXT,
+    RetryCount       INTEGER,
+    DurationMs       INTEGER,
+    Hostname         TEXT,
+    ServiceVersion   TEXT,
+    Environment      TEXT,
+    PayloadSnippet   TEXT,
+    AuthTokenUsed    TEXT,
+    IsCritical       INTEGER,
+    AlertDispatched  INTEGER,
+    ResolvedAt       DATETIME,
+    ResolutionNotes  TEXT,
+    NotificationChannel TEXT,
+    ErrorCategory    TEXT,
+    SeverityLevel    INTEGER,
+    IncidentId       TEXT,
+    TrackingId       TEXT,
+    SourceModule     TEXT,
+    ContainerId      TEXT,
+    Region           TEXT,
+    InstanceId       TEXT,
+    LogLevel         TEXT,
+    ThreadId         TEXT,
+    ProcessId        INTEGER,
+    CpuUsagePct      REAL,
+    MemoryUsageMb    REAL,
+    DiskIoKbSec      REAL,
+    NetworkIoKbSec   REAL,
+    CustomTag1       TEXT,
+    CustomTag2       TEXT
+);
+INSERT INTO api_error_logs (ErrorId,Timestamp,ApiEndpoint,HttpMethod,StatusCode,ErrorMessage,StackTrace,RequestId,UserId,ClientIp,UserAgent,CorrelationId,RetryCount,DurationMs,Hostname,ServiceVersion,Environment,PayloadSnippet,AuthTokenUsed,IsCritical,AlertDispatched,ResolvedAt,ResolutionNotes,NotificationChannel,ErrorCategory,SeverityLevel,IncidentId,TrackingId,SourceModule,ContainerId,Region,InstanceId,LogLevel,ThreadId,ProcessId,CpuUsagePct,MemoryUsageMb,DiskIoKbSec,NetworkIoKbSec,CustomTag1,CustomTag2) VALUES (1,'2025-12-01 09:15:23','/v1/posts','GET',500,'Internal Server Error','stacktrace line1','req-001',101,'203.0.113.5','Mozilla/5.0','corr-001',0,120,'api01','1.2.3','prod','{"id":201}','token123',1,1,'2025-12-01 10:00:00','Restarted service','email','backend',3,'INC001','track-001','posts_module','cont-01','us-east','inst-01','ERROR','thr-01',4567,85.2,512.5,30.1,45.3,'tagA','tagB');
+INSERT INTO api_error_logs (ErrorId,Timestamp,ApiEndpoint,HttpMethod,StatusCode,ErrorMessage,StackTrace,RequestId,UserId,ClientIp,UserAgent,CorrelationId,RetryCount,DurationMs,Hostname,ServiceVersion,Environment,PayloadSnippet,AuthTokenUsed,IsCritical,AlertDispatched,ResolvedAt,ResolutionNotes,NotificationChannel,ErrorCategory,SeverityLevel,IncidentId,TrackingId,SourceModule,ContainerId,Region,InstanceId,LogLevel,ThreadId,ProcessId,CpuUsagePct,MemoryUsageMb,DiskIoKbSec,NetworkIoKbSec,CustomTag1,CustomTag2) VALUES (2,'2025-12-01 11:42:07','/v1/comments','POST',400,'Bad Request','stacktrace line2','req-002',102,'198.51.100.8','Chrome/108.0','corr-002',1,250,'api02','1.2.3','prod','{"text":"test"}','token456',0,0,NULL,'Validated input','slack','validation',2,'INC002','track-002','comments_module','cont-02','eu-west','inst-02','WARN','thr-02',3456,65.0,256.0,15.0,20.0,'tagC','tagD');
+INSERT INTO api_error_logs (ErrorId,Timestamp,ApiEndpoint,HttpMethod,StatusCode,ErrorMessage,StackTrace,RequestId,UserId,ClientIp,UserAgent,CorrelationId,RetryCount,DurationMs,Hostname,ServiceVersion,Environment,PayloadSnippet,AuthTokenUsed,IsCritical,AlertDispatched,ResolvedAt,ResolutionNotes,NotificationChannel,ErrorCategory,SeverityLevel,IncidentId,TrackingId,SourceModule,ContainerId,Region,InstanceId,LogLevel,ThreadId,ProcessId,CpuUsagePct,MemoryUsageMb,DiskIoKbSec,NetworkIoKbSec,CustomTag1,CustomTag2) VALUES (3,'2025-12-01 14:05:55','/v1/votes','PUT',503,'Service Unavailable','stacktrace line3','req-003',103,'192.0.2.12','Safari/15.0','corr-003',2,400,'api03','1.2.3','prod','{"voteType":2}','token789',1,1,NULL,'Scaling issue','pager','infrastructure',5,'INC003','track-003','votes_module','cont-03','ap-south','inst-03','CRITICAL','thr-03',5678,92.5,1024.0,50.0,70.0,'tagE','tagF');
+
+-- Table describing advertising contracts with advertisers
+CREATE TABLE advertiser_contracts
+(
+    ContractId        INTEGER      NOT NULL PRIMARY KEY,
+    AdvertiserId      INTEGER      NOT NULL,
+    ContractStartDate DATE,
+    ContractEndDate   DATE,
+    TotalBudgetUsd    REAL,
+    DailyBudgetUsd    REAL,
+    CPMRateUsd        REAL,
+    CPCRateUsd        REAL,
+    TargetRegion      TEXT,
+    TargetLanguage    TEXT,
+    DeviceTarget      TEXT,
+    AudienceSegment   TEXT,
+    CreativeType      TEXT,
+    CampaignName      TEXT,
+    IsActive          INTEGER,
+    RenewalOption     TEXT,
+    BillingCycle      TEXT,
+    PaymentMethod     TEXT,
+    ContactPersonName TEXT,
+    ContactPersonEmail TEXT,
+    ContactPhone      TEXT,
+    ApprovedByUserId  INTEGER,
+    ApprovalDate      DATETIME,
+    CreativeCount     INTEGER,
+    PlacementCount    INTEGER,
+    ImpressionsGoal   INTEGER,
+    ClicksGoal        INTEGER,
+    ConversionsGoal   INTEGER,
+    ViewabilityTarget REAL,
+    FrequencyCap      INTEGER,
+    GeoExclusionList  TEXT,
+    BlacklistDomains  TEXT,
+    WhitelistDomains  TEXT,
+    CreativeApprovalStatus TEXT,
+    CreativeApprovalDate DATETIME,
+    LastModifiedBy    INTEGER,
+    LastModifiedAt    DATETIME,
+    ContractNotes     TEXT,
+    PerformanceScore  REAL,
+    SLACompliancePct REAL,
+    IsPriority        INTEGER,
+    PriorityLevel     INTEGER,
+    ContractTag       TEXT,
+    InternalReference TEXT,
+    FiscalYear        INTEGER
+);
+INSERT INTO advertiser_contracts (ContractId,AdvertiserId,ContractStartDate,ContractEndDate,TotalBudgetUsd,DailyBudgetUsd,CPMRateUsd,CPCRateUsd,TargetRegion,TargetLanguage,DeviceTarget,AudienceSegment,CreativeType,CampaignName,IsActive,RenewalOption,BillingCycle,PaymentMethod,ContactPersonName,ContactPersonEmail,ContactPhone,ApprovedByUserId,ApprovalDate,CreativeCount,PlacementCount,ImpressionsGoal,ClicksGoal,ConversionsGoal,ViewabilityTarget,FrequencyCap,GeoExclusionList,BlacklistDomains,WhitelistDomains,CreativeApprovalStatus,CreativeApprovalDate,LastModifiedBy,LastModifiedAt,ContractNotes,PerformanceScore,SLACompliancePct,IsPriority,PriorityLevel,ContractTag,InternalReference,FiscalYear) VALUES (1,501,'2025-01-01','2025-12-31',250000,1000,5.0,0.75,'NorthAmerica','en','mobile','tech_enthusiasts','banner','Winter Sale',1,'auto','monthly','credit_card','John Doe','john.doe@advco.com','5551111',201,'2025-01-02 09:00:00',12,30,5000000,120000,8000,0.70,3,'','bad.com','good.com','approved','2025-01-05 10:00:00',201,'2025-06-01 12:00:00','Renewal pending',85.2,98.5,1,2,'Q4_2025','INTREF001',2025);
+INSERT INTO advertiser_contracts (ContractId,AdvertiserId,ContractStartDate,ContractEndDate,TotalBudgetUsd,DailyBudgetUsd,CPMRateUsd,CPCRateUsd,TargetRegion,TargetLanguage,DeviceTarget,AudienceSegment,CreativeType,CampaignName,IsActive,RenewalOption,BillingCycle,PaymentMethod,ContactPersonName,ContactPersonEmail,ContactPhone,ApprovedByUserId,ApprovalDate,CreativeCount,PlacementCount,ImpressionsGoal,ClicksGoal,ConversionsGoal,ViewabilityTarget,FrequencyCap,GeoExclusionList,BlacklistDomains,WhitelistDomains,CreativeApprovalStatus,CreativeApprovalDate,LastModifiedBy,LastModifiedAt,ContractNotes,PerformanceScore,SLACompliancePct,IsPriority,PriorityLevel,ContractTag,InternalReference,FiscalYear) VALUES (2,502,'2025-03-15','2026-03-14',150000,800,6.5,1.10,'Europe','de','desktop','gamers','video','Spring Launch',1,'manual','quarterly','invoice','Anna Schmidt','anna.schmidt@advco.de','5552222',202,'2025-03-16 11:30:00',8,20,3000000,90000,5000,0.68,2,'RU','spam.ru','trust.eu','pending','2025-03-20 14:00:00',202,'2025-07-10 09:15:00','Awaiting performance review',78.5,95.0,0,0,'SPR2025','INTREF002',2025);
+INSERT INTO advertiser_contracts (ContractId,AdvertiserId,ContractStartDate,ContractEndDate,TotalBudgetUsd,DailyBudgetUsd,CPMRateUsd,CPCRateUsd,TargetRegion,TargetLanguage,DeviceTarget,AudienceSegment,CreativeType,CampaignName,IsActive,RenewalOption,BillingCycle,PaymentMethod,ContactPersonName,ContactPersonEmail,ContactPhone,ApprovedByUserId,ApprovalDate,CreativeCount,PlacementCount,ImpressionsGoal,ClicksGoal,ConversionsGoal,ViewabilityTarget,FrequencyCap,GeoExclusionList,BlacklistDomains,WhitelistDomains,CreativeApprovalStatus,CreativeApprovalDate,LastModifiedBy,LastModifiedAt,ContractNotes,PerformanceScore,SLACompliancePct,IsPriority,PriorityLevel,ContractTag,InternalReference,FiscalYear) VALUES (3,503,'2025-06-01','2026-05-31',500000,2000,4.0,0.60,'Asia','ja','mobile','students','native','Summer Campaign',1,'auto','monthly','paypal','Taro Yamada','taro.yamada@advco.jp','5553333',203,'2025-06-02 08:45:00',15,40,8000000,200000,12000,0.75,4,'','bad.jp','good.jp','approved','2025-06-05 13:20:00',203,'2025-08-15 10:30:00','Excellent ROI',92.0,99.0,1,1,'SUMMER2025','INTREF003',2025);
+
+-- Table for logging content language detection events
+CREATE TABLE content_language_detection
+(
+    DetectionId        INTEGER      NOT NULL PRIMARY KEY,
+    ContentId          INTEGER      NOT NULL,
+    ContentType        TEXT,
+    DetectedLanguage   TEXT,
+    ConfidenceScore    REAL,
+    DetectionMethod    TEXT,
+    DetectorVersion    TEXT,
+    DetectedAt         DATETIME,
+    ProcessedByUserId  INTEGER,
+    SourceSystem       TEXT,
+    InputSnippet       TEXT,
+    OutputSnippet      TEXT,
+    IsPrimaryLanguage  INTEGER,
+    IsMachineTranslated INTEGER,
+    TranslationEngine   TEXT,
+    TranslationQuality REAL,
+    DetectedCountry    TEXT,
+    DetectedRegion     TEXT,
+    DetectedCity       TEXT,
+    TagsDetected       TEXT,
+    KeywordsDetected   TEXT,
+    SentimentScore     REAL,
+    ReadabilityScore   REAL,
+    WordCount          INTEGER,
+    CharCount          INTEGER,
+    AvgWordLength      REAL,
+    UniqueWordCount    INTEGER,
+    StopWordCount      INTEGER,
+    NgramSize          INTEGER,
+    NgramCount         INTEGER,
+    ModelName          TEXT,
+    ModelTrainingDate  DATE,
+    ModelParameters    TEXT,
+    ConfidenceIntervalLow REAL,
+    ConfidenceIntervalHigh REAL,
+    IsFlagged          INTEGER,
+    FlagReason         TEXT,
+    ReviewStatus       TEXT,
+    ReviewedByUserId   INTEGER,
+    ReviewedAt         DATETIME,
+    Comments           TEXT,
+    AuditLogId         INTEGER,
+    BatchId            TEXT,
+    ProcessingNode     TEXT
+);
+INSERT INTO content_language_detection (DetectionId,ContentId,ContentType,DetectedLanguage,ConfidenceScore,DetectionMethod,DetectorVersion,DetectedAt,ProcessedByUserId,SourceSystem,InputSnippet,OutputSnippet,IsPrimaryLanguage,IsMachineTranslated,TranslationEngine,TranslationQuality,DetectedCountry,DetectedRegion,DetectedCity,TagsDetected,KeywordsDetected,SentimentScore,ReadabilityScore,WordCount,CharCount,AvgWordLength,UniqueWordCount,StopWordCount,NgramSize,ngramCount,ModelName,ModelTrainingDate,ModelParameters,ConfidenceIntervalLow,ConfidenceIntervalHigh,IsFlagged,FlagReason,ReviewStatus,ReviewedByUserId,ReviewedAt,Comments,AuditLogId,BatchId,ProcessingNode) VALUES (1,301,'post','en',0.97,'n-gram','v1.2','2025-12-01 09:05:00',101,'nl2sql','This is an example post body','This is an example post body',1,0,NULL,0,NULL,NULL,NULL,'programming,sql','example,post',0.1,70,120,800,6.7,110,30,2,240,'langdetect','2024-01-15','param1=0.5;param2=10',0.95,0.99,0,NULL,'pending',NULL,NULL,NULL,'BatchA','node01');
+INSERT INTO content_language_detection (DetectionId,ContentId,ContentType,DetectedLanguage,ConfidenceScore,DetectionMethod,DetectorVersion,DetectedAt,ProcessedByUserId,SourceSystem,InputSnippet,OutputSnippet,IsPrimaryLanguage,IsMachineTranslated,TranslationEngine,TranslationQuality,DetectedCountry,DetectedRegion,DetectedCity,TagsDetected,KeywordsDetected,SentimentScore,ReadabilityScore,WordCount,CharCount,AvgWordLength,UniqueWordCount,StopWordCount,NgramSize,ngramCount,ModelName,ModelTrainingDate,ModelParameters,ConfidenceIntervalLow,ConfidenceIntervalHigh,IsFlagged,FlagReason,ReviewStatus,ReviewedByUserId,ReviewedAt,Comments,AuditLogId,BatchId,ProcessingNode) VALUES (2,302,'comment','es',0.92,'fasttext','v2.0','2025-12-01 10:20:00',102,'nl2sql','Comentario de ejemplo','Comentario de ejemplo',1,0,NULL,0,NULL,NULL,NULL,'comentario,ejemplo','ejemplo,comentario',-0.2,65,45,300,6.6,40,20,3,135,'langdetect','2024-05-20','paramA=0.3;paramB=5',0.88,0.96,0,NULL,'approved',203,'2025-12-01 12:00:00','No issues','Audit2','BatchB','node02');
+INSERT INTO content_language_detection (DetectionId,ContentId,ContentType,DetectedLanguage,ConfidenceScore,DetectionMethod,DetectorVersion,DetectedAt,ProcessedByUserId,SourceSystem,InputSnippet,OutputSnippet,IsPrimaryLanguage,IsMachineTranslated,TranslationEngine,TranslationQuality,DetectedCountry,DetectedRegion,DetectedCity,TagsDetected,KeywordsDetected,SentimentScore,ReadabilityScore,WordCount,CharCount,AvgWordLength,UniqueWordCount,StopWordCount,NgramSize,ngramCount,ModelName,ModelTrainingDate,ModelParameters,ConfidenceIntervalLow,ConfidenceIntervalHigh,IsFlagged,FlagReason,ReviewStatus,ReviewedByUserId,ReviewedAt,Comments,AuditLogId,BatchId,ProcessingNode) VALUES (3,303,'post','ja',0.85,'neural','v3.1','2025-12-01 11:45:00',103,'nl2sql','これはテストの投稿です','これはテストの投稿です',1,0,NULL,0,NULL,NULL,NULL,'テスト,投稿','テスト,投稿',0.05,75,80,500,6.2,70,25,2,160,'langdetect','2025-02-10','paramX=0.7;paramY=12',0.80,0.90,1,'low confidence','needs review',204,'2025-12-01 13:30:00','Manual verification required','Audit3','BatchC','node03');
+
+-- Table storing details about forum thread poll results
+CREATE TABLE forum_poll_results
+(
+    PollResultId      INTEGER      NOT NULL PRIMARY KEY,
+    ThreadId          INTEGER      NOT NULL,
+    PollQuestion      TEXT,
+    OptionA           TEXT,
+    OptionB           TEXT,
+    OptionC           TEXT,
+    OptionD           TEXT,
+    VotesOptionA      INTEGER,
+    VotesOptionB      INTEGER,
+    VotesOptionC      INTEGER,
+    VotesOptionD      INTEGER,
+    TotalVotes        INTEGER,
+    CreatedAt         DATETIME,
+    ClosedAt          DATETIME,
+    IsMultipleChoice  INTEGER,
+    AllowComments     INTEGER,
+    MinVotesRequired  INTEGER,
+    MaxVotesPerUser   INTEGER,
+    CreatorUserId     INTEGER,
+    ModeratorUserId   INTEGER,
+    IsAnonymous       INTEGER,
+    Visibility        TEXT,
+    ResultPublished   INTEGER,
+    PublishDate       DATETIME,
+    CommentCount      INTEGER,
+    SpamFlagCount     INTEGER,
+    LowQualityFlagCount INTEGER,
+    HelpfulFlagCount  INTEGER,
+    IsFeatured        INTEGER,
+    FeaturedScore     REAL,
+    TagsAssociated    TEXT,
+    RelatedThreadIds  TEXT,
+    ResultChecksum    TEXT,
+    EditHistoryCount  INTEGER,
+    LastEditAt        DATETIME,
+    LastEditorUserId  INTEGER,
+    Notes             TEXT,
+    AuditLogId        INTEGER,
+    VersionNumber     INTEGER,
+    CacheKey          TEXT,
+    RefreshScheduledAt DATETIME,
+    RefreshIntervalMinutes INTEGER
+);
+INSERT INTO forum_poll_results (PollResultId,ThreadId,PollQuestion,OptionA,OptionB,OptionC,OptionD,VotesOptionA,VotesOptionB,VotesOptionC,VotesOptionD,TotalVotes,CreatedAt,ClosedAt,IsMultipleChoice,AllowComments,MinVotesRequired,MaxVotesPerUser,CreatorUserId,ModeratorUserId,IsAnonymous,Visibility,ResultPublished,PublishDate,CommentCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsFeatured,FeaturedScore,TagsAssociated,RelatedThreadIds,ResultChecksum,EditHistoryCount,LastEditAt,LastEditorUserId,Notes,AuditLogId,VersionNumber,CacheKey,RefreshScheduledAt,RefreshIntervalMinutes) VALUES (1,401,'Which feature should we implement next?','Search','DarkMode','MobileApp','API','150','120','80','50','400','2025-11-20 09:00:00','2025-12-05 23:59:59',0,1,0,1,301,201,0,'public',1,'2025-12-06 08:00:00',30,0,0,10,0,0,1,85.5,'feature,roadmap','402,403','abc123def','2','2025-12-04 14:00:00',202,'Initial results','1001',1,'poll_cache_401','2025-12-07 00:00:00',1440);
+INSERT INTO forum_poll_results (PollResultId,ThreadId,PollQuestion,OptionA,OptionB,OptionC,OptionD,VotesOptionA,VotesOptionB,VotesOptionC,VotesOptionD,TotalVotes,CreatedAt,ClosedAt,IsMultipleChoice,AllowComments,MinVotesRequired,MaxVotesPerUser,CreatorUserId,ModeratorUserId,IsAnonymous,Visibility,ResultPublished,PublishDate,CommentCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsFeatured,FeaturedScore,TagsAssociated,RelatedThreadIds,ResultChecksum,EditHistoryCount,LastEditAt,LastEditorUserId,Notes,AuditLogId,VersionNumber,CacheKey,RefreshScheduledAt,RefreshIntervalMinutes) VALUES (2,402,'Preferred communication channel?','Email','Chat','Phone','Forum','200','180','60','10','450','2025-10-15 10:30:00','2025-11-15 23:59:59',0,1,0,1,302,202,0,'public',1,'2025-11-16 08:00:00',45,1,0,5,0,0,1,78.2,'communication,preferences','401,403','def456ghi','3','2025-11-14 16:20:00',203,'Updated after review','1002',2,'poll_cache_402','2025-11-20 00:00:00',720);
+INSERT INTO forum_poll_results (PollResultId,ThreadId,PollQuestion,OptionA,OptionB,OptionC,OptionD,VotesOptionA,VotesOptionB,VotesOptionC,VotesOptionD,TotalVotes,CreatedAt,ClosedAt,IsMultipleChoice,AllowComments,MinVotesRequired,MaxVotesPerUser,CreatorUserId,ModeratorUserId,IsAnonymous,Visibility,ResultPublished,PublishDate,CommentCount,SpamFlagCount,LowQualityFlagCount,HelpfulFlagCount,IsFeatured,FeaturedScore,TagsAssociated,RelatedThreadIds,ResultChecksum,EditHistoryCount,LastEditAt,LastEditorUserId,Notes,AuditLogId,VersionNumber,CacheKey,RefreshScheduledAt,RefreshIntervalMinutes) VALUES (3,403,'Select your favorite programming language','Python','JavaScript','Go','Rust','300','250','150','100','800','2025-09-01 08:00:00','2025-09-30 23:59:59',0,1,0,1,303,203,0,'public',1,'2025-10-01 09:00:00',60,0,0,15,0,0,1,92.0,'programming,language','401,402','ghi789jkl','1','2025-09-29 12:45:00',204,'Final results','1003',1,'poll_cache_403','2025-10-02 00:00:00',1440);

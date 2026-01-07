@@ -1,0 +1,452 @@
+-- Fleet acquisition budget details
+CREATE TABLE fleet_acquisition_budget
+(
+    BudgetID INTEGER PRIMARY KEY,
+    FiscalYear INTEGER,
+    RegionCode INTEGER,
+    VehicleCategoryCode INTEGER,
+    PlannedUnits INTEGER,
+    EstimatedCost REAL,
+    FundingSourceCode INTEGER,
+    ApprovalStatus INTEGER,
+    ReviewQuarter INTEGER,
+    CapitalExpenditure REAL,
+    OperationalExpenditure REAL,
+    CostCenterCode INTEGER,
+    ProjectManagerID INTEGER,
+    AllocationPercentage REAL,
+    RiskRating INTEGER,
+    ContingencyReserve REAL,
+    CurrencyCode INTEGER,
+    DepreciationPeriodMonths INTEGER,
+    LeaseOptionFlag INTEGER,
+    MaintenanceReserve REAL,
+    SustainabilityScore INTEGER,
+    TaxImpactEstimate REAL
+);
+INSERT INTO fleet_acquisition_budget VALUES (1,2023,101,5,120,4500000.75,3,1,2,2500000.00,2000000.00,12,45,0.75,2,150000.00,1,36,0,300000.00,85,50000.00);
+INSERT INTO fleet_acquisition_budget VALUES (2,2024,102,3,80,2800000.50,2,0,3,1500000.00,1200000.00,13,46,0.60,3,100000.00,2,48,1,200000.00,78,40000.00);
+INSERT INTO fleet_acquisition_budget VALUES (3,2025,103,4,150,6200000.90,4,1,1,3500000.00,2500000.00,14,47,0.80,1,200000.00,1,30,0,350000.00,90,60000.00);
+
+-- Vehicle OEM specification reference
+CREATE TABLE vehicle_oem_specifications
+(
+    SpecID INTEGER PRIMARY KEY,
+    ManufacturerCode INTEGER,
+    ModelCode INTEGER,
+    Generation INTEGER,
+    EngineDisplacementCC INTEGER,
+    Horsepower INTEGER,
+    TorqueNm INTEGER,
+    FuelTypeCode INTEGER,
+    TransmissionTypeCode INTEGER,
+    DrivetrainCode INTEGER,
+    EmissionStandardCode INTEGER,
+    SafetyRating INTEGER,
+    WarrantyMonths INTEGER,
+    WeightKg INTEGER,
+    LengthMm INTEGER,
+    WidthMm INTEGER,
+    HeightMm INTEGER,
+    WheelbaseMm INTEGER,
+    GroundClearanceMm INTEGER,
+    MaxSpeedKph INTEGER,
+    Acceleration0to100 REAL,
+    FuelConsumptionLper100km REAL,
+    CO2Emissiongperkm REAL,
+    NoiseLevelDbA REAL,
+    PaintOptionsCount INTEGER,
+    UpholsteryTypesCount INTEGER,
+    InfotainmentScreenInches REAL,
+    ConnectivityFeaturesCode INTEGER,
+    AdvancedDriverAssistCode INTEGER,
+    ProductionStartYear INTEGER
+);
+INSERT INTO vehicle_oem_specifications VALUES (101,1,2001,2,1998,150,250,1,2,1,5,5,36,1500,4520,1800,1450,2700,180,210,8.5,6.2,140,68,5,3,8.0,4,3,2020);
+INSERT INTO vehicle_oem_specifications VALUES (102,2,3005,1,1499,120,200,2,1,2,4,4,48,1300,4180,1750,1400,2600,170,190,10.2,5.5,130,65,4,2,7.5,3,2,2021);
+INSERT INTO vehicle_oem_specifications VALUES (103,3,4008,3,2499,200,320,1,3,1,6,5,24,1650,4600,1850,1500,2750,190,230,7.3,5.0,120,70,6,4,9.0,5,4,2019);
+
+-- Customer social media profile mapping
+CREATE TABLE customer_social_media_profiles
+(
+    ProfileID INTEGER PRIMARY KEY,
+    CustomerID INTEGER,
+    PlatformCode INTEGER,
+    AccountCreationYear INTEGER,
+    FollowersCount INTEGER,
+    PostsCount INTEGER,
+    AvgEngagementRate REAL,
+    VerifiedFlag INTEGER,
+    LastActivityMonth INTEGER,
+    ContentCategoryCode INTEGER,
+    AdvertisingSpend REAL,
+    InfluenceScore INTEGER,
+    AudienceAgeMedian INTEGER,
+    AudienceGenderRatio REAL,
+    GeographicRegionCode INTEGER,
+    LanguagePreferenceCode INTEGER,
+    ProfileBioLength INTEGER,
+    URLClicksMonth INTEGER,
+    StoryViewsMonth INTEGER,
+    VideoViewsMonth INTEGER,
+    LiveStreamHoursMonth REAL,
+    SponsoredPostsCount INTEGER,
+    HashtagUsageCount INTEGER,
+    SentimentScore REAL,
+    GrowthRateMonth REAL,
+    ContentFrequencyPerWeek REAL,
+    AvgPostLengthChars INTEGER,
+    ReachImpressionMonth INTEGER,
+    PlatformActivityScore REAL,
+    PrivacySettingCode INTEGER,
+    AccountStatusCode INTEGER
+);
+INSERT INTO customer_social_media_profiles VALUES (1001,0,1,2018,25000,350,2.5,1,12,3,15000.00,78,30,0.55,101,1,120,800,500,2000,15.0,20,45,0.8,3.2,4.5,250,1200000,85.5,2,1);
+INSERT INTO customer_social_media_profiles VALUES (1002,0,2,2019,15000,210,1.8,0,11,2,9000.00,65,28,0.48,102,2,95,600,350,1500,12.0,15,30,0.6,2.7,3.8,180,800000,72.3,1,1);
+INSERT INTO customer_social_media_profiles VALUES (1003,0,3,2020,5000,80,0.9,0,10,1,3000.00,45,35,0.52,103,3,80,300,120,700,8.0,10,12,0.4,1.9,2.5,100,400000,60.1,0,2);
+
+-- Energy market forecast records
+CREATE TABLE energy_market_forecast
+(
+    ForecastID INTEGER PRIMARY KEY,
+    ForecastDate TEXT,
+    RegionCode INTEGER,
+    EnergyTypeCode INTEGER,
+    AvgPricePerMWh REAL,
+    VolatilityIndex REAL,
+    ExpectedDemandMWh REAL,
+    ExpectedSupplyMWh REAL,
+    RenewablePenetrationPercentage REAL,
+    CarbonIntensityGCO2perMWh REAL,
+    MarketSentimentScore INTEGER,
+    RegulatoryImpactScore INTEGER,
+    WeatherImpactFactor REAL,
+    EconomicGrowthFactor REAL,
+    FuelPriceCorrelation REAL,
+    StorageCapacityMWh REAL,
+    GridReliabilityScore INTEGER,
+    ForecastMethodologyCode INTEGER,
+    AnalystID INTEGER,
+    ConfidenceLevelPercentage REAL,
+    ScenarioCode INTEGER,
+    AdjustmentFactor REAL,
+    NotesCode INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER,
+    ExchangeRateImpact REAL,
+    InflationAdjustment REAL,
+    PeakLoadMWh REAL,
+    BaseLoadMWh REAL,
+    LoadFactor REAL
+);
+INSERT INTO energy_market_forecast VALUES (5001,'2023-09-01',101,1,85.50,0.12,1500000.0,1485000.0,35.0,420.0,78,65,0.8,1.2,0.5,20000.0,85,2,12,90.0,1,1.05,0,'2023-08-15',3,1,1,12,0.02,0.03,300000.0,1200000.0,0.67);
+INSERT INTO energy_market_forecast VALUES (5002,'2023-09-01',102,2,70.30,0.15,1100000.0,1080000.0,55.0,380.0,82,70,0.9,1.1,0.6,15000.0,80,2,13,88.0,2,0.98,1,'2023-08-16',4,1,2,6,0.03,0.04,250000.0,900000.0,0.62);
+INSERT INTO energy_market_forecast VALUES (5003,'2023-09-01',103,3,95.20,0.10,1700000.0,1690000.0,28.0,460.0,75,60,0.7,1.3,0.4,25000.0,88,2,14,92.0,3,1.02,2,'2023-08-17',5,1,3,3,0.01,0.02,350000.0,1300000.0,0.71);
+
+-- Road infrastructure project registry
+CREATE TABLE road_infrastructure_projects
+(
+    ProjectID INTEGER PRIMARY KEY,
+    ProjectName TEXT,
+    RegionCode INTEGER,
+    ProjectTypeCode INTEGER,
+    StartDate TEXT,
+    PlannedEndDate TEXT,
+    ActualEndDate TEXT,
+    BudgetAllocated REAL,
+    ExpenditureToDate REAL,
+    ContractorID INTEGER,
+    EngineeringFirmID INTEGER,
+    StatusCode INTEGER,
+    PriorityLevel INTEGER,
+    TrafficImpactScore INTEGER,
+    EnvironmentalImpactScore INTEGER,
+    FundingSourceCode INTEGER,
+    EstimatedJobCreation INTEGER,
+    LandAcquisitionCost REAL,
+    PermitNumber INTEGER,
+    SafetyAuditScore INTEGER,
+    PublicApprovalRating INTEGER,
+    DesignComplexityScore INTEGER,
+    RiskAssessmentScore INTEGER,
+    InflationAdjustmentFactor REAL,
+    CostOverrunPercentage REAL,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER,
+    GPSLatitude REAL,
+    GPSLongitude REAL,
+    ElevationMeters INTEGER,
+    NumberOfLanes INTEGER,
+    PavementTypeCode INTEGER,
+    BridgeCount INTEGER,
+    TunnelCount INTEGER,
+    SignalizationUpgradeFlag INTEGER,
+    SmartSensorDeploymentFlag INTEGER,
+    MaintenancePlanID INTEGER,
+    SustainabilityScore INTEGER,
+    CommunityEngagementHours INTEGER
+);
+INSERT INTO road_infrastructure_projects VALUES (2001,'Highway_Expansion_A','101',1,'2022-01-15','2024-12-31',NULL,250000000.00,175000000.00,301,401,2,1,78,45,3,1200,5000000.00,45001,85,90,70,60,1.03,5.2,'2023-08-10',2,1,1,6,40.7128,-74.0060,15,4,2,0,0,1,1,20001,82,150);
+INSERT INTO road_infrastructure_projects VALUES (2002,'Urban_Roundabout_Revamp','102',2,'2023-03-01','2023-11-30',NULL,50000000.00,20000000.00,302,402,1,2,65,30,4,300,2000000.00,45002,78,70,80,55,2,1.02,2.5,'2023-08-12',3,1,2,3,34.0522,-118.2437,30,2,1,0,0,0,0,20002,75,80);
+INSERT INTO road_infrastructure_projects VALUES (2003,'Interstate_Tunnel_Construction','103',3,'2021-07-20','2026-05-15',NULL,800000000.00,450000000.00,303,403,3,1,88,70,5,2500,12000000.00,45003,92,95,85,80,3,1.05,8.1,'2023-08-14',4,1,3,12,37.7749,-122.4194,20,6,3,2,1,1,20003,90,200);
+
+-- Public event logistics coordination
+CREATE TABLE public_event_logistics
+(
+    EventID INTEGER PRIMARY KEY,
+    EventName TEXT,
+    EventDate TEXT,
+    VenueCode INTEGER,
+    ExpectedAttendance INTEGER,
+    OrganizerID INTEGER,
+    SecurityPlanCode INTEGER,
+    WasteManagementPlanCode INTEGER,
+    AccessibilityComplianceScore INTEGER,
+    TicketingPlatformCode INTEGER,
+    TicketPriceAverage REAL,
+    SponsorshipRevenue REAL,
+    VendorCount INTEGER,
+    FoodAndBeverageVendorCount INTEGER,
+    MerchandiseVendorCount INTEGER,
+    EmergencyMedicalPlanCode INTEGER,
+    TrafficControlPlanCode INTEGER,
+    PublicTransportIntegrationFlag INTEGER,
+    ParkingSpacesReserved INTEGER,
+    VIPAreaCount INTEGER,
+    MediaPartnerCount INTEGER,
+    LiveStreamFlag INTEGER,
+    AudioVisualSetupCode INTEGER,
+    StageCount INTEGER,
+    LightingSetupCode INTEGER,
+    PowerSupplyCapacityKW REAL,
+    EnvironmentalImpactScore INTEGER,
+    SustainabilityInitiativeFlag INTEGER,
+    CharityDonationAmount REAL,
+    VolunteerCount INTEGER,
+    StaffCount INTEGER,
+    SecurityPersonnelCount INTEGER,
+    CleanUpCrewCount INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER
+);
+INSERT INTO public_event_logistics VALUES (3001,'Summer_Festival','2023-07-10',501,50000,801,2,3,85,4,75.00,200000.00,150,80,30,5,6,1,2000,20,12,1,7,2,5,2500.0,70,1,15000.00,300,500,400,200,'2023-08-08',5,1,1,6);
+INSERT INTO public_event_logistics VALUES (3002,'Tech_Conference','2023-09-15',502,15000,802,1,2,92,5,250.00,350000.00,100,40,20,4,5,0,800,10,20,1,8,1,3,2000.0,80,1,12000.00,250,350,300,150,'2023-08-09',6,1,2,3);
+INSERT INTO public_event_logistics VALUES (3003,'Charity_Gala','2023-12-01',503,2000,803,3,1,95,6,500.00,50000.00,30,10,5,2,3,0,300,5,8,0,9,1,2,1500.0,85,0,25000.00,100,150,120,80,'2023-08-10',7,1,3,2);
+
+-- Supplier warehouse audit records
+CREATE TABLE supplier_warehouse_audit
+(
+    AuditID INTEGER PRIMARY KEY,
+    WarehouseID INTEGER,
+    SupplierID INTEGER,
+    AuditDate TEXT,
+    AuditorID INTEGER,
+    OverallScore INTEGER,
+    SafetyComplianceScore INTEGER,
+    InventoryAccuracyScore INTEGER,
+    CleanlinessScore INTEGER,
+    FireSafetyScore INTEGER,
+    SecurityComplianceScore INTEGER,
+    TemperatureControlScore INTEGER,
+    HazardousMaterialHandlingScore INTEGER,
+    DocumentationComplianceScore INTEGER,
+    WorkforceTrainingScore INTEGER,
+    EquipmentConditionScore INTEGER,
+    SpaceUtilizationScore INTEGER,
+    EnergyEfficiencyScore INTEGER,
+    WasteManagementScore INTEGER,
+    ComplianceIssuesCount INTEGER,
+    CorrectiveActionsTaken INTEGER,
+    FollowUpDate TEXT,
+    FollowUpStatusCode INTEGER,
+    RemarksCode INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER,
+    GPSLatitude REAL,
+    GPSLongitude REAL,
+    ElevationMeters INTEGER,
+    DockCount INTEGER,
+    LoadingBayCount INTEGER,
+    StorageTypeCode INTEGER,
+    RefrigeratedSpaceSqM INTEGER,
+    AutomationLevelCode INTEGER,
+    SecuritySystemVersion INTEGER,
+    FireSuppressionSystemVersion INTEGER,
+    AuditDurationHours REAL,
+    AuditMethodologyCode INTEGER,
+    CostOfAudit REAL
+);
+INSERT INTO supplier_warehouse_audit VALUES (4001,601,701,'2023-04-20',901,88,92,85,90,87,80,95,78,82,88,84,90,86,80,2,5,'2023-07-20',1,0,'2023-05-01',8,1,1,40.7128,-74.0060,10,12,8,3,1500,2,5,3,2.5,4,1200.00);
+INSERT INTO supplier_warehouse_audit VALUES (4002,602,702,'2023-05-15',902,81,85,78,80,83,75,88,70,75,80,76,78,75,72,4,7,'2023-08-15',2,1,'2023-06-01',9,1,2,34.0522,-118.2437,12,10,7,2,1200,1,4,2,3.0,5,950.00);
+INSERT INTO supplier_warehouse_audit VALUES (4003,603,703,'2023-06-10',903,90,94,88,92,89,85,97,82,86,92,88,94,90,88,1,3,'2023-09-10',1,0,'2023-07-01',10,1,3,37.7749,-122.4194,8,14,9,4,1800,3,6,4,2.0,3,1300.00);
+
+-- Environmental risk assessment records
+CREATE TABLE environmental_risk_assessments
+(
+    AssessmentID INTEGER PRIMARY KEY,
+    SiteID INTEGER,
+    AssessmentDate TEXT,
+    AssessorID INTEGER,
+    RiskCategoryCode INTEGER,
+    ProbabilityScore INTEGER,
+    ImpactScore INTEGER,
+    RiskLevelScore INTEGER,
+    ContaminationLevel REAL,
+    AirQualityIndex REAL,
+    WaterQualityIndex REAL,
+    SoilStabilityScore INTEGER,
+    BiodiversityImpactScore INTEGER,
+    NoiseLevelDbA REAL,
+    LightPollutionScore INTEGER,
+    ClimateChangeVulnerabilityScore INTEGER,
+    MitigationMeasureCode INTEGER,
+    MitigationCostEstimate REAL,
+    ResidualRiskScore INTEGER,
+    EmergencyResponsePlanFlag INTEGER,
+    MonitoringFrequencyDays INTEGER,
+    StakeholderEngagementScore INTEGER,
+    RegulatoryComplianceScore INTEGER,
+    FundingSourceCode INTEGER,
+    EstimatedRecoveryTimeDays INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER,
+    GPSLatitude REAL,
+    GPSLongitude REAL,
+    ElevationMeters INTEGER,
+    SurroundingLandUseCode INTEGER,
+    ProximityToWaterBodyMeters INTEGER,
+    HistoricalIncidentCount INTEGER,
+    ClimateZoneCode INTEGER,
+    RenewableEnergyPotentialScore INTEGER,
+    ConservationAreaFlag INTEGER,
+    CarbonFootprintTonsCO2 REAL,
+    AdaptationStrategyCode INTEGER,
+    InsuranceCoverageAmount REAL
+);
+INSERT INTO environmental_risk_assessments VALUES (6001,701,'2023-03-05',1001,2,30,70,50,12.5,45.0,65.0,80,55,58.0,20,40,3,250000.00,30,1,180,75,85,4,365,'2023-08-05',11,1,1,6,40.7128,-74.0060,15,3,250,2,5,70,1,1200.00,2,500000.00);
+INSERT INTO environmental_risk_assessments VALUES (6002,702,'2023-04-12',1002,3,45,60,52.5,8.0,55.0,70.0,75,60,45.0,15,35,2,180000.00,45,0,365,68,80,5,730,'2023-08-06',12,1,2,4,34.0522,-118.2437,20,2,300,3,4,65,0,950.00,3,300000.00);
+INSERT INTO environmental_risk_assessments VALUES (6003,703,'2023-05-20',1003,1,20,80,65,5.0,40.0,55.0,85,70,50.0,10,30,1,150000.00,20,1,90,80,90,6,180,'2023-08-07',13,1,3,3,37.7749,-122.4194,10,1,150,1,6,80,1,800.00,4,200000.00);
+
+-- Digital content distribution catalog
+CREATE TABLE digital_content_distribution
+(
+    ContentID INTEGER PRIMARY KEY,
+    Title TEXT,
+    ContentTypeCode INTEGER,
+    PublisherID INTEGER,
+    ReleaseDate TEXT,
+    LicenseStartDate TEXT,
+    LicenseEndDate TEXT,
+    DistributionChannelCode INTEGER,
+    GeographicRegionCode INTEGER,
+    LanguageCode INTEGER,
+    DurationMinutes INTEGER,
+    FileSizeMB REAL,
+    BitrateKbps INTEGER,
+    DRMProtectionFlag INTEGER,
+    AccessibilityFeaturesCode INTEGER,
+    MonetizationModelCode INTEGER,
+    RevenueGenerated REAL,
+    ViewsCount INTEGER,
+    UniqueViewers INTEGER,
+    AverageWatchTimeMinutes REAL,
+    CompletionRatePercentage REAL,
+    RatingScore REAL,
+    ReviewCount INTEGER,
+    ShareCount INTEGER,
+    EmbeddingAllowedFlag INTEGER,
+    SubscriptionRequiredFlag INTEGER,
+    AgeRatingCode INTEGER,
+    ContentTagCount INTEGER,
+    MetadataCompletenessScore INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER,
+    PrimaryGenreCode INTEGER,
+    SubGenreCode INTEGER,
+    ContentRatingAgencyCode INTEGER,
+    OriginalProductionCountryCode INTEGER,
+    SeasonNumber INTEGER,
+    EpisodeNumber INTEGER,
+    SeriesID INTEGER,
+    CastCount INTEGER,
+    CrewCount INTEGER,
+    SynopsisLengthChars INTEGER,
+    PromotionalBudget REAL,
+    MarketingCampaignID INTEGER,
+    LicenseCost REAL
+);
+INSERT INTO digital_content_distribution VALUES (8001,'Eco_Documentary','1',901,'2022-09-01','2022-09-01','2025-09-01',2,101,1,90,1500.0,3200,1,3,2,500000.00,1200000,1100000,80.5,85.0,4.7,350,2000,1,0,5,20,95,'2023-08-01',14,1,1,6,3,1,2,12,0,15,0,2500,80000.00,3001,25000.00);
+INSERT INTO digital_content_distribution VALUES (8002,'Tech_Talk_Episode_5','2',902,'2023-02-15','2023-02-15','2026-02-15',3,102,2,45,500.0,2500,0,2,1,150000.00,300000,250000,30.0,70.0,4.2,150,500,1,1,3,12,85,'2023-08-02',15,1,2,5,4,2,1,0,0,0,0,1200,20000.00,3002,12000.00);
+INSERT INTO digital_content_distribution VALUES (8003,'Morning_News_Show','3',903,'2023-01-01','2023-01-01','2024-12-31',1,103,3,30,300.0,1800,1,1,3,80000.00,500000,480000,25.0,60.0,3.9,200,800,0,0,2,5,78,'2023-08-03',16,1,3,4,5,3,1,1,0,0,0,0,5000,15000.00,3003,10000.00);
+
+-- Smart city transport hub inventory
+CREATE TABLE smart_city_transport_hubs
+(
+    HubID INTEGER PRIMARY KEY,
+    HubName TEXT,
+    CityCode INTEGER,
+    HubTypeCode INTEGER,
+    InstallationDate TEXT,
+    OperatingStatusCode INTEGER,
+    Latitude REAL,
+    Longitude REAL,
+    ElevationMeters INTEGER,
+    NumberOfPlatforms INTEGER,
+    NumberOfDocks INTEGER,
+    NumberOfChargingStations INTEGER,
+    AvgDailyPassengers INTEGER,
+    AvgDailyFreightTons REAL,
+    ConnectivityScore INTEGER,
+    SensorCount INTEGER,
+    CameraCount INTEGER,
+    WiFiCoveragePercentage REAL,
+    PublicLightingCount INTEGER,
+    EnergyConsumptionMWh REAL,
+    RenewableEnergyPercentage REAL,
+    MaintenanceCrewCount INTEGER,
+    LastMaintenanceDate TEXT,
+    NextPlannedUpgradeDate TEXT,
+    FundingSourceCode INTEGER,
+    ConstructionCostMillions REAL,
+    OperatingCostMillions REAL,
+    AccessibilityComplianceScore INTEGER,
+    SecurityLevelScore INTEGER,
+    EnvironmentalImpactScore INTEGER,
+    SmartTicketingEnabledFlag INTEGER,
+    RealTimeInfoDisplaysCount INTEGER,
+    BikeShareDockCount INTEGER,
+    AutonomousVehicleLaneCount INTEGER,
+    ParkingSpacesAvailable INTEGER,
+    EVChargingPowerKW REAL,
+    AirQualitySensorCount INTEGER,
+    NoiseMonitoringSensorCount INTEGER,
+    WaterQualitySensorCount INTEGER,
+    DataHubID INTEGER,
+    IntegrationPlatformCode INTEGER,
+    LastUpdated TEXT,
+    DataSourceCode INTEGER,
+    ValidationFlag INTEGER,
+    PublicationStatusCode INTEGER,
+    ReviewCycleMonths INTEGER
+);
+INSERT INTO smart_city_transport_hubs VALUES (9001,'Central_Transit_Hub',101,1,'2020-06-01',2,40.7128,-74.0060,10,12,8,15,50000,120.5,85,200,50,95.0,30,2500.0,40.0,12,'2023-06-15','2024-01-01',3,250.0,45.0,90,80,70,1,20,10,2,500,150.0,12,8,5,4001,2,'2023-08-01',17,1,1,6);
+INSERT INTO smart_city_transport_hubs VALUES (9002,'Eastside_Bus_Terminal',102,2,'2021-03-15',1,34.0522,-118.2437,15,6,4,10,20000,45.0,78,120,30,88.0,15,1200.0,35.0,8,'2023-07-20','2024-06-01',4,120.0,20.0,85,75,65,0,12,5,0,300,80.0,8,5,3,4002,3,'2023-08-02',18,1,2,5);
+INSERT INTO smart_city_transport_hubs VALUES (9003,'Northside_MultiModal_Hub',103,3,'2019-11-30',2,37.7749,-122.4194,12,8,6,12,35000,80.0,82,150,40,92.0,20,1800.0,38.0,10,'2023-08-10','2025-03-01',5,200.0,35.0,88,78,72,1,18,8,1,400,120.0,10,7,4,4003,1,'2023-08-03',19,1,3,4);

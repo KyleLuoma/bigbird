@@ -1,0 +1,192 @@
+from NlSqlBenchmark.QueryResult import QueryResult
+from NlSqlBenchmark.BenchmarkQuestion import BenchmarkQuestion
+import os
+import pickle
+from NlSqlBenchmark.SchemaObjects import (
+    Schema,
+    SchemaTable,
+    TableColumn,
+    ForeignKey
+)
+
+
+"""
+Super class for all the benchmarks we use in the SKALPEL project to evaluate schema subsetting
+"""
+class NlSqlBenchmark:
+
+    name = "abstract"
+    schema_cache_dir = "src/NlSqlBenchmark/schema_cache"
+
+    def __init__(self):
+        self.databases = ["database1"]
+        self.active_database = 0
+        self.active_database_questions = []
+        self.active_database_queries = []
+        self.active_question_no = 0
+        self.db_connection = None
+        self.name = "abstract"
+        self.sql_dialect = "mssql"
+        self.naturalness = "Native"
+        self.schema_cache = {}
+        self.schema_pickling_disabled = False
+
+
+    def __iter__(self):
+        return self
+
+    def __next__(self) -> BenchmarkQuestion:
+        if self.active_question_no >= len(self.active_database_questions):
+            self.active_database += 1
+            if self.active_database >= len(self.databases):
+                self.__init__()
+                raise StopIteration
+            self.active_question_no = 0
+            self.active_database_questions = self.__load_active_database_questions()
+            self.active_database_queries = self.__load_active_database_queries()
+        question = self.get_active_question()
+        self.active_question_no += 1
+        return question
+    
+
+
+    def __len__(self):
+        return 0
+    
+
+    @staticmethod
+    def get_database_names() -> list:
+        return ["database1"]
+        
+    def get_active_question(self) -> BenchmarkQuestion:
+        return BenchmarkQuestion(
+            question=self.active_database_questions[self.active_question_no],
+            query=self.active_database_queries[self.active_question_no],
+            query_dialect=self.sql_dialect,
+            question_number=self.active_question_no,
+            schema=self.get_active_schema(),
+            schema_naturalness=self.naturalness
+        )
+
+    
+    def get_active_schema(self, database: str = None) -> Schema:
+
+        return Schema(
+            database=self.databases[self.active_database],
+            tables=[
+                SchemaTable(
+                    name="table1",
+                    columns=[
+                        TableColumn(
+                            name="column1",
+                            data_type="int"
+                        )
+                    ],
+                    primary_keys=["column1"],
+                    foreign_keys=[
+                        ForeignKey(
+                            columns=["column1"],
+                            references=("table1", ["column1"])
+                        )
+                    ]
+                )
+            ]
+        )
+
+        # return {
+        #     "database": self.databases[self.active_database],
+        #     "tables": [
+        #         {
+        #             "name": "table1",
+        #             "columns": [
+        #                 {
+        #                     "name": "column1",
+        #                     "type": "int"
+        #                 }
+        #             ],
+        #             "primary_keys": ["column1"],
+        #             "foreign_keys": [
+        #                 {"columns": ["column1"], "references": ("table1", ["column1"])}
+        #             ]
+        #         }
+        #     ]
+        # }
+    
+    def set_active_schema(self, database_name: str) -> None:
+        schema_lookup = {k: v for v, k in enumerate(self.databases)}
+        self.active_database = schema_lookup[database_name]
+        self.active_database_questions = self.__load_active_database_questions()
+        self.active_database_queries = self.__load_active_database_queries()
+    
+    def execute_query(
+            self, query: str, database: str = None, question: int = None
+            ) -> QueryResult:
+        if database == None:
+            database = self.databases[self.active_database]
+        if question == None:
+            question = self.active_database_questions[self.active_question_no]
+        return {
+            "result_set": {},
+            "database": database,
+            "question": question,
+            "error_message": ""
+        }
+    
+
+    def get_sample_values(
+            self, table_name: str, column_name: str, num_values: int = 2
+        ) -> list:
+        sample_values = []
+        query_params = [column_name, table_name, num_values]
+        query = """
+SELECT ? FROM ? LIMIT ?
+"""
+        return sample_values
+    
+    def get_unique_values(
+            self, 
+            table_name: str, 
+            column_name: str, 
+            database: str = None
+            ) -> set[str]:
+        return set()
+
+    
+    def set_active_question_number(self, number: int = 0):
+        self.active_question_no = number
+        return self
+    
+    def __load_active_database_questions(self) -> list:
+        return self.active_database_questions
+    
+    def __load_active_database_queries(self) -> list:
+        return self.active_database_queries
+    
+    def __get_db_connection(self):
+        pass
+
+    @staticmethod
+    def _retrieve_schema_pickle(database_name: str) -> Schema:
+        schema_path = os.path.join(
+            NlSqlBenchmark.schema_cache_dir, 
+            f"{database_name}-Schema.pkl"
+            )
+        if os.path.exists(schema_path):
+            with open(schema_path, "rb") as schema_file:
+                schema: Schema = pickle.load(schema_file)
+                return schema
+        else:
+            raise FileNotFoundError(f"Schema file not found at {schema_path}")
+
+
+    @staticmethod
+    def _store_schema_pickle(schema: Schema, alternate_name: str = None):
+        if not alternate_name:
+            db_name = schema.database
+        else:
+            db_name = alternate_name
+        filename = f"{db_name}-Schema.pkl"
+        schema_path = os.path.join(NlSqlBenchmark.schema_cache_dir, filename)
+        os.makedirs(NlSqlBenchmark.schema_cache_dir, exist_ok=True)
+        with open(schema_path, "wb") as schema_file:
+            pickle.dump(schema, schema_file)

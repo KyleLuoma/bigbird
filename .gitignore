@@ -1,0 +1,13 @@
+/venv/
+/.venv/
+/.local/
+benchmarks/bird_benchmark/
+/.vscode/
+/bigbird_databases/
+cline_cert.env
+*.sqlite
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
