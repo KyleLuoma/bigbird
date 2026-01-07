@@ -7,6 +7,7 @@ benchmarks/bird_benchmark/
 cline_cert.env
 *.sqlite
 __pycache__/
+schema_cache/
 *.pyc
 *.pyo
 *.pyd

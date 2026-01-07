@@ -3,6 +3,8 @@ import sqlite3
 from os.path import dirname, abspath
 import os
 
+from pathlib import Path
+
 from NlSqlBenchmark.NlSqlBenchmark import NlSqlBenchmark
 from NlSqlBenchmark.QueryResult import QueryResult
 from NlSqlBenchmark.BenchmarkQuestion import BenchmarkQuestion
@@ -14,33 +16,46 @@ from NlSqlBenchmark.SchemaObjects import (
     ForeignKey
 )
 
-class BirdNlSqlBenchmark(NlSqlBenchmark):
+class BigBirdNlSqlBenchmark(NlSqlBenchmark):
 
-    name = "bird"
+    name = "bigbird"
+
+    databases = [
+        "california_schools_big",
+        "card_games_big",
+        "codebase_community_big",
+        "debit_card_specializing_big",
+        "european_football_2_big",
+        "financial_big",
+        "formula_1_big",
+        "student_club_big",
+        "superhero_big",
+        "thrombosis_prediction_big",
+        "toxicology_big"
+    ]
     
     def __init__(self):
         super().__init__()
-        self.benchmark_folder = dirname(dirname(dirname(dirname(abspath(__file__))))) + "/benchmarks/bigbird"
-        self.tables_dict = self.__load_tables_dict(self.benchmark_folder)
+        self.benchmark_folder = Path(__file__).parent.parent.parent / "benchmarks" / "bigbird"
         self.questions_list = self.__load_questions_list()
-        self.databases = [t["db_id"] for t in self.tables_dict]
+        self.databases = BigBirdNlSqlBenchmark.databases
         self.schema_cache = {}
         self.active_database_questions = self.__load_active_database_questions()
         self.active_database_queries = self.__load_active_database_queries()
-        self.name = "bird"
+        self.name = BigBirdNlSqlBenchmark.name
         self.sql_dialect = "sqlite"
+        self.active_database_name = self.databases[self.active_database]
+        self.db_con = sqlite3.connect(f"{self.benchmark_folder}/bigbird_databases/{self.active_database_name}.sqlite")
+        self.db_cur = self.db_con.cursor()
 
     @staticmethod
     def get_database_names() -> list:
-        benchmark_folder = dirname(dirname(dirname(dirname(abspath(__file__))))) + "/benchmarks/bird/dev_20240627"
-        tables_dict = BirdNlSqlBenchmark.__load_tables_dict(benchmark_folder=benchmark_folder)
-        databases = [t["db_id"] for t in tables_dict]
-        return databases
+        return BigBirdNlSqlBenchmark.databases
 
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def __next__(self) -> BenchmarkQuestion:
         if self.active_question_no >= len(self.active_database_questions):
             self.active_database += 1
             self.active_question_no = 0
@@ -82,87 +97,63 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
         else:
             pickle_the_schema = False
         
-        for s in self.tables_dict:
-            if s["db_id"] == database:
-                schema_dict = s
-                break
-        column_descriptions = self._load_database_description(db_name=database)
         active_schema = Schema(
             database=database,
             tables=[]
             )
-        for i in range(0, len(schema_dict["table_names_original"])):
-            # Get table names
-            table_name = schema_dict["table_names_original"][i]
-            active_schema.tables.append(
-                SchemaTable(
-                    name=table_name,
-                    columns=[],
-                    primary_keys=[],
-                    foreign_keys=[]
-                    )
+        
+        q_result = self.execute_query(
+            query="SELECT name FROM sqlite_master WHERE type='table';",
+            database=database
+        )
+
+        tables = q_result.result_set["name"]
+
+        for table_name in tables:
+            new_table = SchemaTable(
+                name=table_name
+            )
+            q_result = self.execute_query(
+                query=f"SELECT name AS column_name, type AS data_type FROM pragma_table_info('{table_name}')",
+                database=database
+            )
+            for i in range(0, len(q_result.result_set["column_name"])):
+                c_name = q_result.result_set["column_name"][i]
+                c_type = q_result.result_set["data_type"][i]
+                sample_result = self.get_sample_values(
+                    table_name=table_name,
+                    column_name=c_name,
+                    database=database
                 )
-            columns = []
-            # get column names
-            for (c, t) in zip(schema_dict["column_names_original"], schema_dict["column_types"]):
-                if c[0] == i:
-                    column_name = c[1]
-                    column_description = None
-                    value_description = None
-                    if f"{table_name}.{column_name}" in column_descriptions.keys():
-                        column_description = column_descriptions[f"{table_name}.{column_name}"]["column_description"]
-                        value_description = column_descriptions[f"{table_name}.{column_name}"]["value_description"]
-                    columns.append(TableColumn(
-                        name=column_name, 
-                        data_type=t,
-                        description=column_description,
-                        value_description=value_description
-                        ))
-            active_schema.tables[i].columns = columns
-            active_schema.tables[i].primary_keys = []
-            active_schema.tables[i].foreign_keys = []
-            # Get primary keys
-            for composite_key in schema_dict["primary_keys"]:
-                if type(composite_key) != list:
-                    composite_key = [composite_key]
-                composit_col_names = []
-                for key in composite_key:
-                    key_table_name = schema_dict["table_names_original"][
-                        schema_dict["column_names_original"][key][0]
-                    ]
-                    if key_table_name != schema_dict["table_names_original"][i]:
-                        continue
-                    key_column_name = schema_dict["column_names_original"][key][1]
-                    composit_col_names.append(key_column_name)
-                if len(composit_col_names) > 0:
-                    active_schema.tables[i].primary_keys += composit_col_names
-            # Get foreign keys
-            for fk_reference in schema_dict["foreign_keys"]:
-                new_fk = ForeignKey(columns=[], references=None)
-                fk = fk_reference[0]
-                ref_pk = fk_reference[1]
-                if type(ref_pk) != list:
-                    ref_pk = [ref_pk]
-                if type(fk) != list:
-                    fk = [fk]                
-                for key_column in fk:
-                    key_table_name = schema_dict["table_names_original"][
-                        schema_dict["column_names_original"][key_column][0]
-                    ]
-                    if key_table_name != schema_dict["table_names_original"][i]:
-                        continue
-                    new_fk.columns.append(
-                        schema_dict["column_names_original"][key_column][1]
-                    )
-                referenced_table_name = schema_dict["table_names_original"][
-                        schema_dict["column_names_original"][ref_pk[0]][0]
-                    ]
-                referenced_columns = []
-                for key_column in ref_pk:
-                        referenced_columns.append(schema_dict["column_names_original"][key_column][1])
-                new_fk.references = (referenced_table_name, referenced_columns)
-                if len(new_fk.columns) > 0:
-                    active_schema.tables[i].foreign_keys.append(new_fk)
+                unique_result = self.get_unique_values(
+                    table_name=table_name,
+                    column_name=c_name,
+                    database=database
+                )
+                new_table.columns.append(TableColumn(
+                    name=c_name,
+                    data_type=c_type,
+                    sample_values=sample_result,
+                    unique_values=unique_result
+                ))
+            q_result = self.execute_query(
+                query=f"SELECT name FROM pragma_table_info('{table_name}') WHERE pk == 1;",
+                database=database
+            )
+            for pk in q_result.result_set["name"]:
+                new_table.primary_keys.append(pk)
+            q_result = self.execute_query(
+                query=f"SELECT \"from\", \"table\", \"to\" FROM pragma_foreign_key_list('{table_name}');"
+            )
+            for i in range(0, len(q_result.result_set["from"])):
+                fks = []
+                fks.append(ForeignKey(
+                    columns=[q_result.result_set["from"][i]],
+                    references=(q_result.result_set["table"][i], q_result.result_set["to"][i])
+                ))
+                new_table.foreign_keys = fks
+            active_schema.tables.append(new_table)
+            
         self.schema_cache[database] = active_schema
         if pickle_the_schema:
             self._store_schema_pickle(active_schema)
@@ -173,8 +164,14 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
     def set_active_schema(self, database_name: str) -> None:
         schema_lookup = {k: v for v, k in enumerate(self.databases)}
         self.active_database = schema_lookup[database_name]
+        self.active_database_name = database_name
         self.active_database_questions = self.__load_active_database_questions()
         self.active_database_queries = self.__load_active_database_queries()
+
+        self.db_cur.close()
+        self.db_con.close()
+        self.db_con = sqlite3.connect(f"{self.benchmark_folder}/bigbird_databases/{self.active_database_name}.sqlite")
+        self.db_cur = self.db_con.cursor()
     
 
 
@@ -183,10 +180,14 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
             database = self.databases[self.active_database]
         if question == None:
             question = self.active_question_no
-        con = sqlite3.connect(
-            f"{self.benchmark_folder}/dev_databases/dev_databases/{database}/{database}.sqlite"
-            )
-        cur = con.cursor()
+        if database != self.active_database_name:
+            con = sqlite3.connect(
+                f"{self.benchmark_folder}/bigbird_databases/{database}.sqlite"
+                )
+            cur = con.cursor()
+        else:
+            con = self.db_con
+            cur = self.db_cur
         try:
             res = cur.execute(query)
         except sqlite3.OperationalError as e:
@@ -213,14 +214,12 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
     def get_sample_values(self,  table_name: str, column_name: str, database: str = None, num_values: int = 2) -> list[str]:
         if database == None:
             database = self.active_database
-        con = sqlite3.connect(
-            f"{self.benchmark_folder}/dev_databases/dev_databases/{database}/{database}.sqlite"
-            )
-        cur = con.cursor()
         query = f"select `{column_name}` from `{table_name}` limit {num_values}"
-        res = cur.execute(query)
-        sample_values = res.fetchall()
-        return [s[0] for s in sample_values]
+        q_result = self.execute_query(
+            query=query,
+            database=database
+        )
+        return q_result.result_set[column_name]
     
 
     
@@ -283,13 +282,11 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
         return dev_tables
     
 
-
     def __load_questions_list(self) -> list:
         with open(f"{self.benchmark_folder}/dev.json") as f:
             dev_questions = json.load(f)
         return dev_questions
     
-
 
     def __load_active_database_questions(self) -> list[dict]:
         questions = []
@@ -298,7 +295,6 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
                 questions.append(q["question"])
         return questions
     
-
 
     def __load_active_database_queries(self) -> list[str]:
         queries = []
@@ -309,23 +305,7 @@ class BirdNlSqlBenchmark(NlSqlBenchmark):
     
 
 
-    def _load_database_description(self, db_name: str) -> dict[str, dict[str, str]]:
-        db_path = f"{self.benchmark_folder}/dev_databases/dev_databases/{db_name}/database_description"
-        csv_files = [f for f in os.listdir(db_path) if f.endswith('.csv')]
-        descr_lookup = {}
-        for file in csv_files:
-            with open(f"{db_path}/{file}", encoding="windows-1252") as f:
-                table_name = file.replace(".csv", "")
-                line = f.readline()
-                while line != "":
-                    vals = line.split(",")
-                    if len(vals) < 5:
-                        break
-                    descr_lookup[f"{table_name}.{vals[0]}"] = {}
-                    descr_lookup[f"{table_name}.{vals[0]}"]["column_description"] = vals[2]
-                    descr_lookup[f"{table_name}.{vals[0]}"]["value_description"] = vals[4] if vals[4] not in ("\n", "") else None
-                    line = f.readline()
-        return descr_lookup
+
 
 
     

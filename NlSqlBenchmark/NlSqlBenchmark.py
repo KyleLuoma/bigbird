@@ -1,13 +1,33 @@
+"""
+Copyright 2025 Kyle Luoma
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 from NlSqlBenchmark.QueryResult import QueryResult
 from NlSqlBenchmark.BenchmarkQuestion import BenchmarkQuestion
 import os
 import pickle
+import json
+import threading
+import time
 from NlSqlBenchmark.SchemaObjects import (
     Schema,
     SchemaTable,
     TableColumn,
     ForeignKey
 )
+from NlSqlBenchmark import semantic_compare
 
 
 """
@@ -16,13 +36,14 @@ Super class for all the benchmarks we use in the SKALPEL project to evaluate sch
 class NlSqlBenchmark:
 
     name = "abstract"
-    schema_cache_dir = "src/NlSqlBenchmark/schema_cache"
+    schema_cache_dir = "NlSqlBenchmark/schema_cache"
 
     def __init__(self):
         self.databases = ["database1"]
         self.active_database = 0
         self.active_database_questions = []
         self.active_database_queries = []
+        self.active_database_question_evidence = []
         self.active_question_no = 0
         self.db_connection = None
         self.name = "abstract"
@@ -44,6 +65,7 @@ class NlSqlBenchmark:
             self.active_question_no = 0
             self.active_database_questions = self.__load_active_database_questions()
             self.active_database_queries = self.__load_active_database_queries()
+            self.active_database_question_evidence = self.__load_active_database_evidences()
         question = self.get_active_question()
         self.active_question_no += 1
         return question
@@ -62,10 +84,11 @@ class NlSqlBenchmark:
         return BenchmarkQuestion(
             question=self.active_database_questions[self.active_question_no],
             query=self.active_database_queries[self.active_question_no],
+            evidence=self.active_database_question_evidence[self.active_question_no],
             query_dialect=self.sql_dialect,
             question_number=self.active_question_no,
             schema=self.get_active_schema(),
-            schema_naturalness=self.naturalness
+            schema_naturalness=self.naturalness,
         )
 
     
@@ -117,21 +140,49 @@ class NlSqlBenchmark:
         self.active_database = schema_lookup[database_name]
         self.active_database_questions = self.__load_active_database_questions()
         self.active_database_queries = self.__load_active_database_queries()
+        self.active_database_question_evidence = self.__load_active_database_evidences()
     
     def execute_query(
-            self, query: str, database: str = None, question: int = None
+            self, query: str, database: str = None, question: int = None, query_timeout: int = None
             ) -> QueryResult:
         if database == None:
             database = self.databases[self.active_database]
         if question == None:
             question = self.active_database_questions[self.active_question_no]
-        return {
-            "result_set": {},
-            "database": database,
-            "question": question,
-            "error_message": ""
-        }
+        return QueryResult(
+            result_set={},
+            database=database,
+            question=question,
+            error_message=""
+        )
     
+
+    def compare_gold_to_generated_query(
+            self, 
+            benchmark_question: BenchmarkQuestion, 
+            generated_query: str
+            ) -> tuple[dict[bool, str], QueryResult, QueryResult]:
+        g_st = time.perf_counter()
+        gold_results = self.execute_query(
+            query=benchmark_question.query,
+            database=benchmark_question.schema.database
+            )
+        g_et = time.perf_counter()
+
+        gen_timeout = int((g_et - g_st) * 2) + 1
+        gen_timeout = max(30, gen_timeout)
+        generated_results = self.execute_query(
+            query=generated_query,
+            database=benchmark_question.schema.database,
+            query_timeout=gen_timeout
+        )
+
+        subset_check_result = semantic_compare.compare_gold_to_generated(
+            gold_result=gold_results, generated_result=generated_results
+        )
+        return subset_check_result, gold_results, generated_results
+      
+
 
     def get_sample_values(
             self, table_name: str, column_name: str, num_values: int = 2
@@ -139,7 +190,7 @@ class NlSqlBenchmark:
         sample_values = []
         query_params = [column_name, table_name, num_values]
         query = """
-SELECT ? FROM ? LIMIT ?
+SELECT DISTINCT ? FROM ? LIMIT ?
 """
         return sample_values
     
@@ -150,6 +201,45 @@ SELECT ? FROM ? LIMIT ?
             database: str = None
             ) -> set[str]:
         return set()
+    
+
+    def save_stats_to_disk(self, save_path: str):
+        db_stats = {}
+        for database in self.databases:
+            schema = self.get_active_schema(database=database)
+            total_rows = 0
+            total_vals = 0
+            for table in schema.tables:
+                if " " in table.name and self.sql_dialect == "sqlite":
+                    table_name = f"`{table.name}`"
+                elif " " in table.name and self.sql_dialect == "mssql":
+                    table_name = f"[{table.name}]"
+                else:
+                    table_name = table.name
+                result = self.execute_query(
+                    query=f"select count(*) as col_count from {table_name}",
+                    database=database
+                )
+                try:
+                    result.result_set = {k.lower(): result.result_set[k] for k in result.result_set.keys()}
+                    row_count = result.result_set["col_count"][0]
+                    total_rows += row_count
+                    total_vals += (row_count * len(table.columns))
+                except TypeError:
+                    print(result.error_message)
+                except KeyError:
+                    print(result.error_message)
+                    print(result.result_set)
+                except AttributeError:
+                    print(result.error_message)
+            db_stats[database] = {
+                "table_count": schema.get_table_count(),
+                "column_count": schema.get_column_count(),
+                "total_rows": total_rows,
+                "total_vals": total_vals
+            }
+        with open(f"{save_path}/{self.name}_schema_stats.json", "wt") as f:
+            f.write(json.dumps(db_stats, indent=4))
 
     
     def set_active_question_number(self, number: int = 0):
@@ -162,6 +252,9 @@ SELECT ? FROM ? LIMIT ?
     def __load_active_database_queries(self) -> list:
         return self.active_database_queries
     
+    def __load_active_database_evidences(self) -> list[str]:
+        return self.active_database_question_evidence
+
     def __get_db_connection(self):
         pass
 

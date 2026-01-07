@@ -1,4 +1,18 @@
+"""
+Copyright 2025 Kyle Luoma
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 
 class TableColumn:
     """
@@ -117,8 +131,8 @@ class ForeignKey:
 
     def __init__(
             self,
-            columns: list,
-            references: tuple #("table1": ["column1" ...])
+            columns: list[str],
+            references: tuple[str, list[str]] #("table1": ["column1" ...])
             ):
         self.columns = columns
         self.references = references
@@ -230,11 +244,11 @@ class SchemaTable:
         return (f"SchemaTable({','.join(output_strings)})")
     
 
-    def as_ddl(self):
-        ddl = f"CREATE TABLE {self.name} (\n"
+    def as_ddl(self, ident_enclose_l: str = "", ident_enclose_r: str = ""):
+        ddl = f"CREATE TABLE {ident_enclose_l}{self.name}{ident_enclose_r} (\n"
         column_definitions = []
         for column in self.columns:
-            column_def = f"  {column.name} {column.data_type}"
+            column_def = f"  {ident_enclose_l}{column.name}{ident_enclose_r} {column.data_type}"
             if column.name in self.primary_keys:
                 column_def += " PRIMARY KEY"
             column_definitions.append(column_def)
@@ -242,15 +256,28 @@ class SchemaTable:
         if self.foreign_keys:
             foreign_key_definitions = []
             for fk in self.foreign_keys:
-                fk_columns = ", ".join(fk.columns)
+                processed_fk_columns = [f"{ident_enclose_l}{c}{ident_enclose_r}" for c in fk.columns]
+                fk_columns = ", ".join(processed_fk_columns)
             ref_table, ref_columns = fk.references
-            ref_columns_str = ", ".join(ref_columns)
+            processed_references = {f"{ident_enclose_l}{c}{ident_enclose_r}" for c in ref_columns}
+            ref_columns_str = ", ".join(processed_references)
             foreign_key_definitions.append(
-                f"  FOREIGN KEY ({fk_columns}) REFERENCES {ref_table} ({ref_columns_str})"
+                f"  FOREIGN KEY ({fk_columns}) REFERENCES {ident_enclose_l}{ref_table}{ident_enclose_r} ({ref_columns_str})"
             )
             ddl += ",\n" + ",\n".join(foreign_key_definitions)
-        ddl += "\n);"
+        ddl += "\n);" 
         return ddl
+    
+
+    def get_column_count(self) -> int:
+        return len(self.columns)
+    
+
+    def column_exists(self, column_name: str) -> bool:
+        for column in self.columns:
+            if column.name.lower() == column_name.lower():
+                return True
+        return False
 
 
 
@@ -303,5 +330,74 @@ class Schema:
             if t.name == table_name:
                 return t
         raise KeyError(table_name)
+    
+
+    def table_exists(self, table_name: str) -> bool:
+        for t in self.tables:
+            if t.name.lower() == table_name.lower():
+                return True
+        return False
+    
+
+    def column_exists(self, column_name: str, table_name: str = None) -> bool:
+        for t in self.tables:
+            if table_name and table_name != t.name:
+                continue
+            if t.column_exists(column_name=column_name):
+                return True
+        return False
+    
+
+    def get_table_count(self) -> int:
+        return len(self.tables)
+    
+
+    def get_column_count(self) -> int:
+        col_count = 0
+        for table in self.tables:
+            col_count += table.get_column_count()
+        return col_count
+    
+
+    def as_bird_json_format(self) -> dict:
+        schema_dict = {"db_id": self.database} 
+        schema_dict["table_names"] = [table.name for table in self.tables]
+        schema_dict["table_names_original"] = schema_dict["table_names"]
+        schema_dict["column_names"] = [[-1, "*"]]
+        schema_dict["column_types"] = []
+        col_ix_lookup = {}
+        col_ix = 0
+        for ix, table in enumerate(self.tables):
+            for column in table.columns:
+                schema_dict["column_names"].append([ix, column.name])
+                schema_dict["column_types"].append(column.data_type)
+                col_ix_lookup[(table.name, column.name)] = col_ix
+                col_ix += 1
+        schema_dict["column_names_original"] = schema_dict["column_names"]
+        schema_dict["primary_keys"] = []
+        for table in self.tables:
+            if len(table.primary_keys) == 0:
+                continue
+            if len(table.primary_keys) == 1:
+                schema_dict["primary_keys"].append(col_ix_lookup[(table.name, table.primary_keys[0])])
+            else:
+                composite_key = [col_ix_lookup[(table.name, col_name)] for col_name in table.primary_keys]
+                schema_dict["primary_keys"].append(composite_key)
+        schema_dict["foreign_keys"] = []
+        for table in self.tables:
+            if not table.foreign_keys or len(table.foreign_keys) == 0:
+                continue
+            for fk in table.foreign_keys:
+                for ix in range(len(fk.columns)):
+                    if type(fk.references[1]) == list:
+                        references_col = fk.references[1][ix]
+                    else:
+                        references_col = fk.references[1]
+                    schema_dict["foreign_keys"].append([
+                        col_ix_lookup[(table.name, fk.columns[ix])],
+                        col_ix_lookup[(fk.references[0], references_col)]
+                    ])
+        return schema_dict
+
 
 
