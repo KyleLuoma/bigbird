@@ -6,7 +6,7 @@ import sqlite3
 from tqdm import tqdm
 
 from tools.query_database import query_database
-from tools.get_database_schema import get_schema
+from tools.get_database_schema import get_schema, get_table_names
 
 
 databases = [
@@ -31,14 +31,32 @@ def main():
         bigbird_path = Path(__file__).parent / "benchmarks" / "bigbird" / "bigbird_databases" / f"{db}_big.sqlite"
         bb_db = sqlite3.connect(bigbird_path)
         cursor = bb_db.cursor()
+        schema = get_schema(db)
+
+        bird_ddl = schema.lower().replace("create table", "create table if not exists")           
+        for ddl in bird_ddl.split(";"):
+            if "SQLITE_SEQUENCE" in ddl.upper():
+                continue
+            cursor.execute(ddl)
+            bb_db.commit()
+
+        bird_tables = get_table_names(db)
+        bird_tables = [t[0] for t in bird_tables]
+
+        for table in bird_tables:
+            if table == "sqlite_sequence":
+                continue
+            cursor.execute(f"ALTER TABLE \"{table}\" RENAME TO \"{table}_\"")
+            bb_db.commit()
+            cursor.execute(f"ALTER TABLE \"{table}_\" RENAME TO \"{table}\"")
+            bb_db.commit()
 
         for i in tqdm(range(100)):
 
             cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
             bb_tables = [t[0] for t in cursor.fetchall()]
             bb_tables = "\n".join(bb_tables)
-            schema = get_schema(db)
-
+            
             with open("./prompts/make_table.prompt") as f:
                 creation_prompt = f.read()
             creation_prompt = creation_prompt.format(
