@@ -5,6 +5,7 @@ benchmarks/bird_benchmark/
 /.vscode/
 /bigbird_databases/
 cline_cert.env
+litellm_cert.env
 *.sqlite
 __pycache__/
 schema_cache/

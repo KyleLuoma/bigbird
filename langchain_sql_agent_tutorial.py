@@ -4,26 +4,71 @@ import os
 import json
 from pathlib import Path
 import httpx
+
 from langchain_openai import ChatOpenAI
+from langchain_litellm import ChatLiteLLMRouter
+
+from litellm import Router
+
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain_community.llms import vllm
 from langchain.agents import create_agent
+import warnings
 
+os.environ["SSL_CERT_FILE"] = r"C:\Users\kyle.luoma\Research Projects\agent-framework-zoo\westpoint-root-ca.crt"
+
+warnings.filterwarnings("ignore")
+
+MODEL_LIST = [
+    {
+        "model_name": "granite-4.0-h-small",
+        "litellm_params": {
+            "model": "hosted_vllm/ibm-granite/granite-4.0-h-small",
+            "api_key": "-",
+            "api_base": "https://wire.westpoint.edu/vllm-granite/v1"
+        }
+    },
+    {
+        "model_name": "gpt-oss-120b",
+        "litellm_params": {
+            "model": "hosted_vllm/openai/gpt-oss-120b",
+            "api_key": "-",
+            "api_base": "https://wire.westpoint.edu/vllm/v1"
+        }
+    }
+]
 
 def main():
 
-    with open("./.local/openai.json") as f:
-        api_key = json.loads(f.read())["api_key"]
+    # with open("./.local/openai.json") as f:
+    #     api_key = json.loads(f.read())["api_key"]
 
-    model = ChatOpenAI(
-        model="gpt-4o",
-        api_key=api_key
+    # model = ChatOpenAI(
+    #     model="gpt-4o",
+    #     api_key=api_key
+    # )
+
+    custom_http_client = httpx.Client(verify=False)
+
+    # model = ChatOpenAI(
+    #     base_url="https://wire.westpoint.edu/vllm-granite/v1",
+    #     http_client=custom_http_client,
+    #     api_key="",
+    #     model="ibm-granite/granite-4.0-h-small",
+    #     extra_body={"tool_choice":"required"}
+    # )
+
+    litellm_router = Router(model_list=MODEL_LIST)
+
+    model = ChatLiteLLMRouter(
+        router=litellm_router,
+        model_name="gpt-oss-120b",
     )
 
     database_name = "debit_card_specializing"
 
-    dev_databases_path = Path(__file__).parent / "bird_benchmark" / "dev_databases" / "dev_databases"
+    dev_databases_path = Path(__file__).parent / "benchmarks" / "bird_benchmark" / "dev_databases" / "dev_databases"
     db_path = dev_databases_path / database_name / f"{database_name}.sqlite"
     db = SQLDatabase.from_uri("sqlite:///" + str(db_path))
 
